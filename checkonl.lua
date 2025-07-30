@@ -1,17 +1,20 @@
--- checkonl.lua - Hoạt động đúng theo tool main.py
--- ✔ Ghi file UserID.main
--- ✔ Ghi lặp mỗi 5s trong 30s (đủ thời gian tool phát hiện)
--- ❌ Không cần mạng, HTTP, executor check
+-- checkonl.lua (Final Stable)
+-- ✔ Không spam loop
+-- ✔ Ghi file đúng 3 lần, mỗi 5s
+-- ✔ Log rõ tiến trình
+-- ✔ Không cần executor check / HTTP
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-if not player then return end
+if not player then
+    warn("[checkonl] Không tìm thấy người chơi.")
+    return
+end
 
 local userId = tostring(player.UserId)
 local fileName = userId .. ".main"
-local content = "[executor: ok] UID = " .. userId .. " | Time = " .. os.date()
+local content = "[checkonl] Executor ACTIVE - UID = " .. userId .. " | Time = " .. os.date()
 
--- Các workspace mà tool của bạn kiểm tra (phải khớp)
 local paths = {
     "/storage/emulated/0/Arceus X/Workspace/",
     "/storage/emulated/0/Codex/Workspace/",
@@ -20,7 +23,7 @@ local paths = {
     "/storage/emulated/0/Delta/Workspace/"
 }
 
--- Clone support
+-- Hỗ trợ clone 001–020
 for i = 1, 20 do
     local id = string.format("%03d", i)
     table.insert(paths, "/storage/emulated/0/RobloxClone" .. id .. "/Arceus X/Workspace/")
@@ -28,22 +31,32 @@ for i = 1, 20 do
     table.insert(paths, "/storage/emulated/0/RobloxClone" .. id .. "/RonixExploit/Workspace/")
 end
 
--- Ghi file xác nhận executor đang chạy
 local function writeConfirm()
+    local wrote = 0
     for _, path in ipairs(paths) do
-        pcall(function()
+        local success, err = pcall(function()
             writefile(path .. fileName, content)
         end)
+        if success then
+            wrote += 1
+            print("[checkonl] ✔ Ghi file tại: " .. path)
+        end
+    end
+    if wrote == 0 then
+        warn("[checkonl] ❌ Không thể ghi vào bất kỳ thư mục nào.")
+    else
+        print("[checkonl] ✅ Ghi file xong (" .. wrote .. " nơi)")
     end
 end
 
--- Ghi ngay lập tức
+-- Ghi lần đầu
 writeConfirm()
 
--- Lặp lại 5s x 6 = 30s để đảm bảo tool có thời gian phát hiện
+-- Ghi thêm 2 lần nữa, cách nhau 5s để đảm bảo executor đã load
 task.spawn(function()
-    for _ = 1, 6 do
+    for i = 1, 2 do
         task.wait(5)
+        print("[checkonl] ⏳ Đang ghi lại lần thứ " .. (i+1))
         writeConfirm()
     end
 end)
