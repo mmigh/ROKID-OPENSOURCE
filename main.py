@@ -48,12 +48,10 @@ boot_time = boot_time()
 def check_executor_online(uid):
     try:
         r = requests.get(f"https://checkonl-api.onrender.com/api/status/{uid}", timeout=5)
-        if r.status_code == 200 and r.json().get("status") == "online":
-            print(f"[CheckUI] UID {uid} → online")
+        if r.status_code == 200 and r.json().get("status") == "online":            
             return True
     except Exception:
-        pass
-    print(f"[CheckUI] UID {uid} → offline")
+        pass   
     return False
 
 auto_android_id_enabled = False
