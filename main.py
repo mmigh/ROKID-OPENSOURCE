@@ -45,6 +45,15 @@ codex_bypass_enabled = False
 codex_bypass_thread = None
 boot_time = boot_time()
 
+def check_executor_online(uid):
+    try:
+        res = requests.get(f"https://your-server.com/api/status/{uid}", timeout=5)
+        data = res.json()
+        return data.get("status") == "online"
+    except Exception as e:
+        print(f"[CheckUI] Ping lỗi: {e}")
+        return False
+
 auto_android_id_enabled = False
 auto_android_id_thread = None
 auto_android_id_value = None
