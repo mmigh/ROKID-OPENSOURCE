@@ -1238,15 +1238,15 @@ class ExecutorManager:
     @staticmethod
     def check_executor_status(package_name, continuous=True, max_wait_time=180):
         retry_timeout = time.time() + max_wait_time
+        uid = globals()["_user_"][package_name]
+
         while True:
-            for workspace in globals()["workspace_paths"]:
-                id = globals()["_user_"][package_name]
-                file_path = os.path.join(workspace, f"{id}.main")
-                if os.path.exists(file_path):
-                    return True
-            if continuous and time.time() > retry_timeout:
-                return False
-            time.sleep(20)
+          if check_executor_online(uid):
+             return True
+          if continuous and time.time() > retry_timeout:
+             return False
+         print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")
+         time.sleep(5)
 
     @staticmethod
     def check_executor_and_rejoin(package_name, server_link, next_package_event):
@@ -1922,3 +1922,4 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
