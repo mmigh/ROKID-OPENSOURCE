@@ -1245,7 +1245,7 @@ class ExecutorManager:
              return True
           if continuous and time.time() > retry_timeout:
              return False
-               print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")
+             print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")
          time.sleep(5)
 
     @staticmethod
@@ -1922,5 +1922,6 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
