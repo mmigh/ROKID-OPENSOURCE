@@ -1244,17 +1244,14 @@ class ExecutorManager:
         notified = False  # Chỉ log 1 lần khi offline                            
 
         while True:                                                              
-            if check_executor_online(uid):                                       
-                print(f"[CheckUI] ✅ UID {uid} đã online.")
+            if check_executor_online(uid):                                      
                 notified = True
                 return True                                                      
 
-            if continuous and time.time() > retry_timeout:                       
-                print(f"[CheckUI] ❌ Quá {max_wait_time}s, UID {uid} vẫn offline.") 
+            if continuous and time.time() > retry_timeout:                      
                 return False                                                     
 
-            if not notified:                                                    
-                print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")          
+            if not notified:                                                              
                 notified = True                                                  
 
             time.sleep(5)                                                        
@@ -1933,6 +1930,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
