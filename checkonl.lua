@@ -1,13 +1,10 @@
--- checkonl.lua (Final Stable)
--- ✔ Không spam loop
--- ✔ Ghi file đúng 3 lần, mỗi 5s
--- ✔ Log rõ tiến trình
--- ✔ Không cần executor check / HTTP
+-- checkonl.lua - Final Stable Test Version
+-- Ghi file vào workspace + /Download/, log rõ ràng, không spam
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 if not player then
-    warn("[checkonl] Không tìm thấy người chơi.")
+    warn("[checkonl] ❌ Không tìm thấy người chơi.")
     return
 end
 
@@ -15,15 +12,17 @@ local userId = tostring(player.UserId)
 local fileName = userId .. ".main"
 local content = "[checkonl] Executor ACTIVE - UID = " .. userId .. " | Time = " .. os.date()
 
+-- Workspace paths tiêu chuẩn
 local paths = {
     "/storage/emulated/0/Arceus X/Workspace/",
     "/storage/emulated/0/Codex/Workspace/",
     "/storage/emulated/0/Fluxus/Workspace/",
     "/storage/emulated/0/RonixExploit/Workspace/",
-    "/storage/emulated/0/Delta/Workspace/"
+    "/storage/emulated/0/Delta/Workspace/",
+    "/storage/emulated/0/Download/" -- Ghi vào đây để kiểm tra thủ công
 }
 
--- Hỗ trợ clone 001–020
+-- Thêm clone
 for i = 1, 20 do
     local id = string.format("%03d", i)
     table.insert(paths, "/storage/emulated/0/RobloxClone" .. id .. "/Arceus X/Workspace/")
@@ -31,32 +30,37 @@ for i = 1, 20 do
     table.insert(paths, "/storage/emulated/0/RobloxClone" .. id .. "/RonixExploit/Workspace/")
 end
 
-local function writeConfirm()
-    local wrote = 0
+-- Ghi file và xác minh bằng isfile + readfile
+local function writeAndCheck()
     for _, path in ipairs(paths) do
-        local success, err = pcall(function()
-            writefile(path .. fileName, content)
+        local fullPath = path .. fileName
+        local ok, err = pcall(function()
+            writefile(fullPath, content)
         end)
-        if success then
-            wrote += 1
-            print("[checkonl] ✔ Ghi file tại: " .. path)
+
+        if ok and isfile(fullPath) then
+            local readOk, readContent = pcall(function()
+                return readfile(fullPath)
+            end)
+            if readOk then
+                print("[checkonl] ✅ Ghi file thành công tại: " .. fullPath)
+                print("[checkonl] 📄 Nội dung:\n" .. readContent)
+            else
+                warn("[checkonl] ⚠ Ghi thành công nhưng không đọc được: " .. fullPath)
+            end
+        else
+            warn("[checkonl] ❌ Ghi thất bại tại: " .. fullPath)
+            if err then warn("   Lý do: " .. tostring(err)) end
         end
-    end
-    if wrote == 0 then
-        warn("[checkonl] ❌ Không thể ghi vào bất kỳ thư mục nào.")
-    else
-        print("[checkonl] ✅ Ghi file xong (" .. wrote .. " nơi)")
     end
 end
 
--- Ghi lần đầu
-writeConfirm()
-
--- Ghi thêm 2 lần nữa, cách nhau 5s để đảm bảo executor đã load
+-- Ghi 3 lần cách nhau 5 giây (không spam)
+writeAndCheck()
 task.spawn(function()
     for i = 1, 2 do
         task.wait(5)
-        print("[checkonl] ⏳ Đang ghi lại lần thứ " .. (i+1))
-        writeConfirm()
+        print("[checkonl] 🔁 Ghi lại lần thứ " .. (i + 1))
+        writeAndCheck()
     end
 end)
