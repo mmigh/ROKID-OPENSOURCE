@@ -47,7 +47,7 @@ boot_time = boot_time()
 
 def check_executor_online(uid):
     try:
-        res = requests.get(f"https://your-server.com/api/status/{uid}", timeout=5)
+        res = requests.get(f"http://87.106.52.7:6041/api/status/{uid}", timeout=5)
         data = res.json()
         return data.get("status") == "online"
     except Exception as e:
