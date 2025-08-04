@@ -1238,19 +1238,19 @@ class ExecutorManager:
                         console.print(f"[bold yellow][ Shouko.dev ] - No valid path found to write Lua script for {executor_name}[/bold yellow]")
 
     @staticmethod
-    def check_executor_status(package_name, continuous=True, max_wait_time=240):
-    retry_deadline = time.time() + max_wait_time
-    uid = globals()["_user_"][package_name]
+    def check_executor_status(package_name, continuous=True, max_wait_time=180):
+      retry_timeout = time.time() + max_wait_time
+      uid = globals()["_user_"][package_name]
 
-    while True:
-        if check_executor_online(uid):
+      while True:
+         if check_executor_online(uid):
             return True
 
-        if continuous and time.time() > retry_deadline:
-            print(f"[CheckUI] Quá {max_wait_time}s chờ UID {uid}, offline → rejoin")
+         if continuous and time.time() > retry_timeout:
             return False
 
-        time.sleep(10)  # chờ 10s trước lần kiểm tiếp
+        print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")
+        time.sleep(5)
 
     @staticmethod
     def check_executor_and_rejoin(package_name, server_link, next_package_event):
@@ -1926,6 +1926,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
