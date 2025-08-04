@@ -47,12 +47,14 @@ boot_time = boot_time()
 
 def check_executor_online(uid):
     try:
-        res = requests.get(f"http://87.106.52.7:6041/api/status/{uid}", timeout=5)
-        data = res.json()
-        return data.get("status") == "online"
-    except Exception as e:
-        print(f"[CheckUI] Ping lỗi: {e}")
-        return False
+        r = requests.get(f"https://checkonl-api.onrender.com/api/status/{uid}", timeout=5)
+        if r.status_code == 200 and r.json().get("status") == "online":
+            print(f"[CheckUI] UID {uid} → online")
+            return True
+    except Exception:
+        pass
+    print(f"[CheckUI] UID {uid} → offline")
+    return False
 
 auto_android_id_enabled = False
 auto_android_id_thread = None
@@ -1236,19 +1238,19 @@ class ExecutorManager:
                         console.print(f"[bold yellow][ Shouko.dev ] - No valid path found to write Lua script for {executor_name}[/bold yellow]")
 
     @staticmethod
-    def check_executor_status(package_name, continuous=True, max_wait_time=180):
-        retry_timeout = time.time() + max_wait_time
-        uid = globals()["_user_"][package_name]
+    def check_executor_status(package_name, continuous=True, max_wait_time=240):
+    retry_deadline = time.time() + max_wait_time
+    uid = globals()["_user_"][package_name]
 
-        while True:
-            if check_executor_online(uid):
-               return True
+    while True:
+        if check_executor_online(uid):
+            return True
 
-            if continuous and time.time() > retry_timeout:
-               return False
+        if continuous and time.time() > retry_deadline:
+            print(f"[CheckUI] Quá {max_wait_time}s chờ UID {uid}, offline → rejoin")
+            return False
 
-        print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")
-        time.sleep(5)
+        time.sleep(10)  # chờ 10s trước lần kiểm tiếp
 
     @staticmethod
     def check_executor_and_rejoin(package_name, server_link, next_package_event):
