@@ -1238,26 +1238,25 @@ class ExecutorManager:
                         console.print(f"[bold yellow][ Shouko.dev ] - No valid path found to write Lua script for {executor_name}[/bold yellow]")
 
     @staticmethod
-    def check_executor_status(package_name, continuous=True, max_wait_time=200):
-        retry_timeout = time.time() + max_wait_time
-        uid = globals()["_user_"][package_name]
-        notified = False  # Chỉ log 1 lần khi offline
+    def check_executor_status(package_name, continuous=True, max_wait_time=200): 
+        retry_timeout = time.time() + max_wait_time                              
+        uid = globals()["_user_"][package_name]                                  
+        notified = False  # Chỉ log 1 lần khi offline                            
 
-      while True:
-          if check_executor_online(uid):
-             print(f"[CheckUI] ✅ UID {uid} đã online.")
-             # Nếu cần thì gửi webhook tại đây
-             return True
+        while True:                                                              
+            if check_executor_online(uid):                                       
+                print(f"[CheckUI] ✅ UID {uid} đã online.")                      
+                return True                                                      
 
-         if continuous and time.time() > retry_timeout:
-            print(f"[CheckUI] ❌ Quá {max_wait_time}s, UID {uid} vẫn offline.")
-            return False
+            if continuous and time.time() > retry_timeout:                       
+                print(f"[CheckUI] ❌ Quá {max_wait_time}s, UID {uid} vẫn offline.") 
+                return False                                                     
 
-         if not notified:
-             print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")
-             notified = True
+            if not notified:                                                    
+                print(f"[CheckUI] UID {uid} chưa online, chờ tiếp...")          
+                notified = True                                                  
 
-         time.sleep(5)
+            time.sleep(5)                                                        
 
     @staticmethod
     def check_executor_and_rejoin(package_name, server_link, next_package_event):
@@ -1933,6 +1932,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
