@@ -5,7 +5,7 @@ local Players     = game:GetService("Players")
 -- Chờ đến khi LocalPlayer sẵn sàng
 repeat task.wait() until Players.LocalPlayer
 local uid = tostring(Players.LocalPlayer.UserId)
-local pingUrl = "https://checkonl-api.onrender.com/ping?uid=" .. uid .. "&source=executor"
+local pingUrl = "https://dummy-r3m8.onrender.com/ping?uid=" .. uid .. "&source=executor"
 
 while true do
     local ok, res = pcall(function()
