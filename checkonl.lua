@@ -1,5 +1,5 @@
 local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
 
 repeat task.wait() until Players.LocalPlayer
 local player = Players.LocalPlayer
@@ -8,15 +8,35 @@ local pingUrl = "https://dummy-r3m8.onrender.com/ping?uid=" .. uid .. "&source=e
 
 print("[Checkonl] Start ping for UID:", uid)
 
+local function is_disconnected()
+    -- kiểm tra nếu có RobloxPromptGui báo lỗi/disconnect
+    local prompt = CoreGui:FindFirstChild("RobloxPromptGui")
+    if prompt then
+        for _, d in ipairs(prompt:GetDescendants()) do
+            local name = tostring(d.Name):lower()
+            if name:find("error") or name:find("disconnect") or name:find("lost") then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 while true do
-    if not player or not player.Parent or not game:IsLoaded() then
-        warn("[Checkonl] Player lost → stop ping")
-        break -- ✅ dừng hẳn, để tool ngoài rejoin
+    if not player or not player.Parent or is_disconnected() then
+        warn("[Checkonl] Player disconnected -> stop ping")
+        break
     end
 
-    pcall(function()
-        game:HttpGet(pingUrl)
+    local ok, res = pcall(function()
+        return game:HttpGet(pingUrl)
     end)
+    if ok then
+        print("[Checkonl] ping ok")
+    else
+        warn("[Checkonl] ping failed:", res)
+    end
+
     task.wait(30)
 end
 
