@@ -1236,7 +1236,7 @@ class ExecutorManager:
                         console.print(f"[bold yellow][ Shouko.dev ] - No valid path found to write Lua script for {executor_name}[/bold yellow]")
 
     @staticmethod
-    def check_executor_status(package_name, continuous=True, max_wait_time=180): 
+    def check_executor_status(package_name, continuous=True, max_wait_time=60): 
         retry_timeout = time.time() + max_wait_time
         uid = globals()["_user_"][package_name]
         notified = False  # chỉ log 1 lần khi offline
@@ -1270,7 +1270,7 @@ class ExecutorManager:
                     start_time = time.time()
                     executor_loaded = False
 
-                    while time.time() - start_time < 180:
+                    while time.time() - start_time < 60:
                         # 🔹 gọi check_executor_status mới (đã dùng API)
                         if ExecutorManager.check_executor_status(package_name):
                             globals()["package_statuses"][package_name]["Status"] = "\033[1;32mExecutor has loaded successfully\033[0m"
@@ -1931,6 +1931,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
