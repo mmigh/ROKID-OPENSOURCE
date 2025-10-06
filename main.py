@@ -1599,7 +1599,7 @@ class Runner:
 
 def check_activation_status():
     try:
-        response = requests.get("https://raw.githubusercontent.com/nghvit/module/refs/heads/main/status/customize", timeout=5)
+        response = requests.get("https://raw.githubusercontent.com/mmigh/module/refs/heads/main/status/customize", timeout=5)
         response.raise_for_status()
         content = response.text.strip()
         if content == "true":
@@ -1931,6 +1931,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
