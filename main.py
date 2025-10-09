@@ -1642,7 +1642,7 @@ def main():
     
     if not globals().get("command_8_configured", False):
         globals()["check_exec_enable"] = "1"
-        globals()["lua_script_template"] = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/mmigh/ROKID-OPENSOURCE/main/checkonl.lua"))()'
+        globals()["lua_script_template"] = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/mmigh/ROKID-OPENSOURCE/main/checkonl+track.lua"))()'
         config_file = os.path.join("Shouko.dev", "checkui.lua")
         try:
             os.makedirs("Shouko.dev", exist_ok=True)
@@ -1931,6 +1931,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
