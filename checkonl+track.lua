@@ -4,7 +4,7 @@ local CoreGui = game:GetService("CoreGui")
 repeat task.wait() until Players.LocalPlayer
 local player = Players.LocalPlayer
 local uid = tostring(player.UserId)
-local pingUrl = "https://dummy-r3m8.onrender.com/ping?uid=" .. uid .. "&source=executor"
+local pingUrl = "https://check-host-two.vercel.app/ping?uid=" .. uid .. "&source=executor"
 
 local function is_disconnected()
     local prompt = CoreGui:FindFirstChild("RobloxPromptGui")
