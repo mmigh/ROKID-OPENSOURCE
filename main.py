@@ -47,7 +47,7 @@ boot_time = boot_time()
 
 def check_executor_online(uid):
     try:
-        r = requests.get(f"https://dummy-r3m8.onrender.com/api/status/{uid}", timeout=5)
+        r = requests.get(f"https://check-host-two.vercel.app/api/status/{uid}", timeout=5)
         if r.status_code == 200 and r.json().get("status") == "online":            
             return True
     except Exception:
@@ -1931,6 +1931,7 @@ if __name__ == "__main__":
         print(f"\033[1;31m[ Shouko.dev ] - Error during initialization: {e}\033[0m")
         Utilities.log_error(f"Initialization error: {e}")
         raise
+
 
 
 
