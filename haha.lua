@@ -19,6 +19,7 @@ pcall(function()
 end)
 
 local baseUrl = "http://78.154.103.36:9302/ping"
+local hasDisconnected = false
 
 local function sendPing(isHop)
     isHop = isHop or false
@@ -44,18 +45,28 @@ local function sendPing(isHop)
     end
 end
 
-local function is_disconnected()
-    local prompt = CoreGui:FindFirstChild("RobloxPromptGui")
-    if prompt then
-        for _, d in ipairs(prompt:GetDescendants()) do
-            local name = tostring(d.Name):lower()
-            if name:find("error") or name:find("disconnect") or name:find("lost") then
-                return true
+-- Lắng nghe lỗi ngắt kết nối dựa trên cấu trúc ErrorPrompt chuẩn của Roblox
+local function setupErrorDetection()
+    local promptOverlay = CoreGui:FindFirstChild("RobloxPromptGui") 
+        and CoreGui.RobloxPromptGui:FindFirstChild("promptOverlay")
+    
+    if promptOverlay then
+        promptOverlay.ChildAdded:Connect(function(child)
+            if child.Name == "ErrorPrompt"
+                and child:FindFirstChild("MessageArea")
+                and child.MessageArea:FindFirstChild("ErrorFrame") then
+                
+                if not hasDisconnected then
+                    hasDisconnected = true
+                    warn("[Checkonl] Disconnection / ErrorPrompt detected! Stopping ping loop (No rejoin)...")
+                end
             end
-        end
+        end)
     end
-    return false
 end
+
+-- Gọi thiết lập bắt lỗi ngay từ đầu
+pcall(setupErrorDetection)
 
 player.OnTeleport:Connect(function(teleportState)
     if teleportState == Enum.TeleportState.InProgress or teleportState == Enum.TeleportState.Started then
@@ -67,8 +78,8 @@ end)
 print("[Checkonl] Start ping loop for UID:", uid)
 
 while true do
-    if not player or not player.Parent or is_disconnected() then
-        warn("[Checkonl] Player disconnected -> stop ping")
+    if not player or not player.Parent or hasDisconnected then
+        warn("[Checkonl] Player disconnected or error detected -> stop ping")
         break
     end
 
